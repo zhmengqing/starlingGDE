@@ -1,0 +1,597 @@
+﻿Our Capture the Flag Game
+《俘获旗帜》游戏
+4183
+Welcome to Starling deep dive, where we will focus on creating an interesting game 
+using the excellent Starling framework. We will learn about the major aspects of 
+a typical game including game states and game loops, which will eventually help 
+us to create our own Starling-based game engine. We will be proceeding on the 
+assumption that you already know the concepts of ActionScript 3 programming  
+and have a basic knowledge of the Starling framework. If you are good in 
+ActionScript 3 but have never tried Starling, this is the opportunity to get started. 
+Starling opens up the possibility of deploying your ActionScript-based games onto 
+the touch-based devices including Android and iOS with excellent performance.
+In this chapter, we will cover the following topics:
+欢迎来到Starling深入研究，这里我们将使用高性能的Starling框架来创建一个有趣的游戏。我们学习一个典型的游戏，包括游戏状态和游戏循环，以此来帮助我们创建自己的基于Starling的游戏引擎。我们假设你已经对AS3编程有所了解并且对于Starling框架有基本的认识。如果你擅长AS3语言但是没有使用过Starling，现在就是学习的计划。Starling可以让基于AS的游戏移植到Android或者iOS设备上，并保证高性能的游戏效果，此章节，我们将涵盖如下内容：
+
+• Learn about the components that make up a game engine
+• Learn about the tile-based design approach
+• Get introduced to the tools of trade—applications which help in development
+• Explain and understand the game idea which we will be implementing
+• Implement an array-based level data onto a top-down game scene
+
+学习制作一个游戏引擎的组件
+学习基于瓦块的设计方法
+了解构建游戏过程中所使用的工具
+解释并理解实现游戏的想法
+在俯视图游戏场景中实现基于数组的层级数据
+
+Understanding a game
+So what really is a game? It seems to be a difficult question, as we can imagine a 
+million kinds of answers depending on whom you would ask. But particularly for 
+a developer, a game can be explained as a very simple and straightforward logic 
+block. When stripped of all its glory, a game program essentially becomes what 
+we programmers call a loop. You may find it hard at this point to even consider to 
+imagine that the ultra-realistic 3D racing game that you had just played is indeed  
+just a glorified programming loop.
+理解一个游戏
+什么是一个真正的游戏？看起来是一个很难回答的问题，因为我们可以想出千百万个回答，关键取决于你问谁。但是对于一个开发者来说，一个游戏可以理解为一个简单直接的逻辑块。去除所有外部包装，一个游戏程序就是一个循环罢了。对这点你可能觉得很难相信，更不可能想象刚刚玩过的逼真的三维赛车游戏只是一个编程中的循环。
+This loop is known as the game loop and it helps in executing the game logic, which 
+is separated into logical blocks known as states or game states.
+Our Capture the Flag Game
+Introducing the game loop and game states
+Once the game is started, the program will enter the game loop and remains in 
+the loop until we exit the game. During this time, the game loop gets executed at a 
+predetermined time, every second. Sometimes this maybe called the FPS (frames 
+per second). In typical cases, we try to maintain a stable FPS throughout the game 
+for the perfect gameplay experience. In every frame, the logic will execute a set of 
+instructions as per the current state of the game. The state of a game is defined by 
+game states. This may sound a bit confusing if you have not tried developing games 
+yet; please read ahead for more clarification.
+这个循环就是游戏循环，它对实现游戏逻辑很有帮助，可以分离为状态逻辑块和游戏状态逻辑块。
+《俘获旗帜》游戏
+游戏循环和游戏状态简介
+游戏启动后，程序进入游戏循环直到我们退出游戏位置。在这段时间里，游戏循环在预订的时间时刻执行着。有时候我们叫它FPS（每秒帧速)。在典型的例子里，我们尽量维持一个稳定的游戏帧频以保证游戏稳定的体验。在每一帧，逻辑都会执行当前游戏状态的一系列指令。一个游戏的状态是游戏状态定义的。如果你之前没有开发过游戏，你可能会决定有点迷惑，提前阅读下后面会更清晰。
+
+Game state
+Let us try to understand a game state in layman's terms. A typical game starts off in 
+an introduction (init) state, moves onto a menu state of some kind, and then to an 
+actual gameplay state. When you get defeated, the game moves onto a game over 
+state, and then moves towards the menu state where the process can be restarted. 
+The traditional way of handling multiple states is with a series of if statements, 
+switches, and loops. The program begins in the introduction state and loops until a 
+key is pressed or a certain time has elapsed. Then, the menu state starts displaying a 
+set of buttons and loops until a selection is made. Later, the game begins where we 
+loop through the game logic until we reach a level up or till a game is over. In every 
+frame through the game loop, the program checks to see if it should switch to the 
+next state or simply draw the next frame from the current state.
+游戏状态
+我们现在以门外汉的角度来尝试理解一个游戏状态。典型的游戏状态开始都是一个介绍状态，之后切换到有很多种类的菜单状态，之后才到真正的游戏状态。当你输了后，游戏会切换到结束状态，然后会转到进程重启的状态。传统处理多状态的方式是一系列if语句，switch以及循环。程序在介绍状态时候启动，然后一直循环，知道一个特定时间后某个键按下。然后菜单状态显示出一系列按钮，之后会在你作出选择前一直存在。之后游戏会在我们过关或者游戏结束之前一直运行。在游戏循环的每一帧，程序都会检查是否应该切换到下一个状态或者只是简单绘制当前状态的下一帧即可。
+Game loop
+In its very basic form, the game loop is a state machine which switches between the 
+different game states based on a game logic. Here is a simple illustration of the basic 
+game loop with very basic game states: Initialization, Game loop, and Shutdown 
+(exit). The following diagram shows the basic game loop:
+Initialization
+Game loop
+process
+input
+render
+simulate
+game world
+Shutdown
+游戏循环
+这是一个很基本的模式，游戏循环是基于游戏逻辑的不同游戏状态间切换的一个状态机。下面是一个基于简单游戏状态的基本游戏循环：初始化、游戏循环、关闭（退出）。下面表格绘制了基本的游戏循环：
+初始化
+游戏循环
+处理
+输入
+绘制
+模拟
+游戏世界
+关闭
+
+The game loop receives user interactions and inputs, executes the game logic, 
+updates the game world, and finally renders the scene onto our screen. The loop 
+gets repeated based on the FPS. We need to break down our own game into different 
+game states and implement the game engine using an efficient game loop, which 
+logically executes through these states based on the user interaction or logic results. 
+Do not think that this is a complicated process, as we will be breaking down our 
+game idea into manageable game states and implementing it into a loop using an 
+efficient technique that is already provided to us by Flash.
+游戏循环接受用户交互和输入，执行游戏逻辑，更新游戏世界，最终绘制场景到我们的显示器上。此循环是基于FPS不断重复的。我们需要将游戏分解为不同游戏状态来用一个高效的游戏循环实现游戏引擎，这样就可以逻辑上基于用户交互或者逻辑结果来执行这些状态。不要以为这是一个很复杂的过程，我们会将我们的游戏想法分解为可管理的游戏状态并使用Flash已经提供给我们的高效技术来在循环中实现它。
+Flash's inherent game loop
+Flash already has a loop implemented which is working perfectly for us. All we need 
+is to tap into this rendering loop. Flash has an FPS setting, based on which the Flash 
+Player tries to render each frame one after the other. We can use this for our game 
+loop as we have the Event.ENTER_FRAME event, which gets dispatched on every 
+frame. We can easily write our core game logic as a listener to this event, and it will 
+get executed for every frame which serves the purpose of the game loop. In addition 
+to this, Starling has a new EnterFrameEvent, which also brings in more efficiency as 
+well as functionality. With this event, we get access to the elapsed time between each 
+individual EnterFrame events. This time difference is crucial in implementing  
+time-based animations and delivering the same performance when the FPS cannot 
+remain the same over the duration of execution.
+Flash内置的游戏循环
+Flash已经有一个实现了的游戏循环，可以很好的为我们工作。我需要的就是了解这个绘制循环。Flash有一个FPS设置，这是基于Flash绘制每一帧的。我们可以利用每帧都派发的Event.ENTER_FRAME事件来在游戏中使用。我们可以轻易的将核心游戏逻辑写成此事件的一个监听，这样就可以在每帧执行，以达到游戏循环的目的。此外，Starling有一个新的EnterFrameEvent，功能强大且高效。有了这个事件，我们可以访问每个EnterFrame事件之间的时间间隔。这个时间差异在实现基于时间的动画以及执行期间保持稳定FPS是很关键的
+Flash Player tries to render frame after frame while trying to maintain a stable FPS. 
+The following diagram—the famous Flash Player elastic runtime diagram—explains 
+how Flash Player executes the code and does the rendering for every frame. Each 
+frame loop consists of two phases, divided into the following three parts:
+• Events
+• The EnterFrame event
+• Rendering
+Flash Player尽量在绘制每帧的时候维持一个稳定的FPS。下面是有名的Flash Player弹性运行时表格，解释了Flash Player执行代码以及每帧绘制的详细信息。每帧都有两个状态，分为三部分：
+事件
+EnterFrame事件
+绘制
+
+The first phase includes two parts (events and the EnterFrame event), both of which 
+potentially results in your code being called. In the first part of the first phase, 
+runtime events arrive and are dispatched. The runtime never speeds up the frame 
+rate due to lack of activity. If events occur during other parts of the execution cycle, 
+the runtime queues up those events and dispatches them in the next frame. The 
+second part of the first phase is the EnterFrame event. This event is distinct from  
+the others because it is always dispatched once per frame. 
+第一阶段包括两部分，都是在代码调用的时候运行。第一阶段的第一部分是运行时事件到达并且派发。由于缺少行为，运行时不会加速帧频。如果事件在运行循环的其他部分发生，运行时会将这些事件排队，然后在下一帧派发它们。第一阶段的第二部分是EnterFrame事件。这个事件跟其他不一样，因为它是每帧都派发的。
+The following diagram shows Flash Player Elastic Racetrack:
+Traditional Flash Player Elastic Racetrack
+Code Execution
+Rendering
+Heavy Code Execution
+Heavy Rendering
+1 frame
+1 frame
+1 frame
+Once all the events are dispatched, the rendering phase of the frame loop begins. At 
+that point, the runtime calculates the state of all visible elements on the screen and 
+draws them to the screen. Then, the process repeats itself, like a runner going around 
+a racetrack.
+下面的图片显示了Flash Player灵活的运行轨道：
+传统Flash Player 领过的运行轨道
+代码执行
+绘制
+代码运行偏多
+绘制偏多
+一旦所有事件派发完毕，就开始了每帧循环绘制。此时运行时计算屏幕上所有可视元素的状态，将它们绘制到屏幕上。之后像一个围绕轨道跑步的人一样重复执行。
+Capture the Flag
+It's time to talk about a game idea that we will be trying to implement in this book. 
+We will be creating an isometric game based on tile-based logic where the objective 
+is to capture the enemy's flag while defending our own. The game will be turn based, 
+where each turn is determined by the dice throws. The game involves enemies with 
+AI (Artificial Intelligence), who will try to avoid obstacles and find paths to reach 
+their destination. It also involves the creation of levels externally, which will adhere 
+to a specific format suitable to be used in the game. We will include the ability for 
+two players to play against each other by sharing the gaming device.
+《捕获旗帜》
+现在该谈下我们此书中需要实现的游戏想法了。我们会创建一个机遇瓦块逻辑的等视角游戏，目标就是获取敌人的旗帜同时需要防守我们自己的旗帜。游戏是回合制的，通过掷筛子决定该谁操作。游戏里包含AI敌人，它们会尽力躲避障碍物并寻找到达目的地的路径。同时也包含外部层级的创建，这里会附着到适合游戏的一个特殊格式里。还包括两个通过分享游戏设备的玩家互相对抗的功能。
+The game idea
+The game is played out between two teams in an open terrain which will vary 
+depending on the level loaded. The two teams are color coded among which one 
+will be controlled by the player, while the other will be controlled by the computer. 
+Later we will try to make both teams player controlled when we implement the same 
+device multiplayer. The terrain is divided into square grids, which can be occupied 
+by the soldiers of either team. Each team has their base to the extremes of the playing 
+field away from each other. Each team base will have three soldiers and a colored 
+flag, which they should defend. The objective is to capture the opponent team's flag 
+and bring it to your base while keeping your flag intact. The team which has both the 
+flags at their base wins the game. 
+游戏想法
+游戏中两个队伍在一个开阔的地形上展开，地形取决于加载的层级。两队是通过颜色编码的，一队是玩家控制的，另一个是电脑控制的。之后在实现多玩家设备时会实现多玩家控制操作。地形分解为方块格子，每队的士兵都可以在上面占领。每个队伍都有相互之间的极限游戏区域。每个队伍基地里会有三个战士和一个需要保护的带颜色的旗帜。游戏目标就是俘获对手的旗帜并将它拿到自己的基地，同时要保证自己旗帜的完整。有两个旗帜的队伍获得游戏胜利。
+The following screenshot shows the finished Capture the Flag game level:
+Rules of the game
+The gameplay is controlled by throwing a dice. Each team gets a turn/chance 
+to throw the dice after the other team has completed its move, and hence it is a 
+turn-based game. For a turn-based game, only one player can make a move at any 
+particular time; when it is his/her turn, other players need to wait for their turn. A 
+famous example would be the classic chess game.
+Dice values and their corresponding results in our game are as follows:
+• If the dice value is 1, the player can add a soldier on a grid next to their base
+• If the dice value is 6, the player can add a bomb on a grid next to their base
+• For any dice values, the player can move his/her soldiers as many grids as  
+the value
+下面的截图展示了《捕获旗帜》游戏完成后的游戏层级：
+游戏规则
+游戏玩法是通过掷骰子控制的。每个队伍在另一个队伍移动完毕后获得一次掷筛骰子的计划，因此这是一个回合制游戏。对回合制游戏来说，在任何特定时间都只有一个玩家进行移动。轮到他操作的时候其他玩家需要等待。一个最有名的案例就是经典象棋游戏。
+骰子值以及对应游戏中的结果如下所示：
+如果骰子值为1，玩家在他们基地旁边添加一个战士到网格上面。
+如果骰子值为6，玩家在他们基地旁边添加一个炸弹到网格上面。
+其他情况，玩家可以将战士移动任意个网格。
+Player can move multiple soldiers if he/she has more than one soldier on the grid. 
+The total number of moves made by all the soldiers should be equal to the dice value. 
+A soldier can only be moved once per dice throw.
+The rules of the game play are as follows:
+• Any grid can be occupied by a single soldier only.
+• Soldiers can enter the grid occupied by an opponent soldier, thereby resetting 
+the opponent soldier to their base. If a soldier ends up on a grid with a bomb, 
+both the soldier and the bomb gets reset to base.
+• Soldier entering a grid with a flag picks it up.
+• Collecting the flag doesn't require an exact dice value.
+• Bombs automatically move towards the nearest enemy soldier one step at 
+each turn.
+如果网格上面有多个战士，玩家可以移动多个战士。
+移动战士最大值等于骰子值。
+每次掷骰子之后才可以移动战士。
+游戏玩法如下：
+任何网格只能被一个战士占据。
+战士可以进入敌人占领的网格，这样敌人被迫回到他们的基地。如果一个战士最终到达一个带有炸弹的网格，那炸弹和网格都重置到基地。
+战士到达一个带旗子的网格会捡起旗子。
+手机旗帜不需要一个特定的骰子值。
+炸弹在每轮自动向最近的敌人移动一步。
+A valid move is executed by the player by dragging from the soldier to a destination 
+grid, if the current dice value permits the same. The user interface of the game will 
+also have a die which can be clicked on to stop the dice roll. This results in a new 
+dice value for which the moves can be executed. For grid-based games, we have a 
+well-established school of game development logic called tile-based design. We will 
+explore the same in the next section.
+玩家将战士移到目的网格才算一次有效的移动，当然是在骰子值允许的范围内。游戏的交互界面也会有一个用来停止骰子转动的按钮。这样就产生了一个新的移动执行树值。对网格化游戏来说，我们有一套完备的游戏开发逻辑，叫做基于瓦块的设计。我们将在下一部分研究。
+The tile-based approach
+Tile-based game design involves breaking the level art into pieces known as tiles, 
+which will then be arranged in a two - dimensional grid to create complicated 
+levels. These tiles will be of equal dimensions, which means that the height and 
+width will be the same for all of the tiles. Care should be taken while designing such 
+tiles, as they need to be joined with other tiles on all four sides without creating a 
+discontinuity in the overall level graphic created by all of the tiles arranged in the 
+grid. Hence, a tile will need to be seamless, and we should be able to stack an infinite 
+number of them adjacent to each other in order to create complicated-level designs.
+The major advantages of using such an approach are as follows:
+基于瓦块的方法
+基于瓦块的游戏设计包括将素材层级分为一些叫瓦块的碎片，之后将它们以二维网格形式排列，创建复杂的层级。这些瓦块的高度和宽度都是相同的。在设计这些瓦块的时候需要注意，因为需要在网格排列的所有瓦块中，不用创建一整个连续的层级就可以将它们跟四周其他的瓦块结合。因此，瓦块需要是无缝想，我们需要堆积无限多个瓦块以便创建复杂层级的设计。
+此方法的主要优势在于：
+• We can get rid of huge level sheets
+• Only a limited number of tiles are capable of creating complicated levels
+• Tile-based level and logic can be implemented using standard data structures
+• Collision detection and path finding becomes comparatively easier
+• Scrolling levels are much easier to implement
+
+• Multiple views can be supported: top-down, side, and isometric
+• Easy serializing and deserializing of level data
+我们可以摆脱大量层级表单
+只需要有限个瓦块就可以创建复杂的层级
+可以使用标准数据结构创建基于瓦块的层级和逻辑
+碰撞检测和路径查找相对来说简单点
+层级滑动易于实现
+支持多视角：俯视图、侧视图以及等轴视角
+可以轻易实现层级数据的序列化和解序列化
+
+The following screenshot shows an example of a top-down tile-based game level:
+Now let us see how a simple two-dimensional array can be used to facilitate the 
+implementation of the tile-based design.
+An array-based implementation of a level
+We have understood that a tile-based level is actually a two-dimensional grid of tiles. 
+This can be logically represented using a 2D array, where the value stored at any 
+index can be the ID of the corresponding tile. For example, say we have 20 different 
+tiles making up a level of 50 x 50 tiles. This means that if an individual tile has 
+dimensions A x B, then our level will be 50 x A wide and 50 x B high. Here, A is called 
+tileWidth whereas B is called tileHeight. In many cases, both of these values will 
+be the same resulting in square tiles. For representing these 20 different tiles, we can 
+give them sequential IDs starting from 1 to 20. So, tile number 12 will have an ID as 
+12. This means that our 50 x 50 level data can be stored as a two-dimensional array 
+with tile IDs as values.
+下面的截图展示了基于瓦块游戏层级的俯视图：
+现在我们来看下如何使用简单的二维数组来实现基于瓦块的设计。
+层级的数组实现
+我们知道一个基于瓦块的层级实际上是一个二维网格瓦块。我们可以用一个二维数组来表示，索引保存的值代表对应瓦块的ID。例如有一个用20个不同瓦块组成的50*50的层级。这表示如果一个单独的瓦块有A*B维度，那我们的的层级就是50*A宽，50*B高。这里的A叫做瓦块宽度，而B叫做瓦块高度。在很多例子中，这些值在正方形瓦块中都是相同的。为了表示着不同的20个瓦块我们用1到20来顺序标记它们的ID。那第12个瓦块就是ID为12的瓦块，这样我们可以使用瓦块ID值来保存50*50的层级数据。
+The following example shows the level data for an 8 x 5 tile grid:
+下面的例子是8*5瓦块网格的层级数据：
+[[5,1,1,1,1,1,1,6],
+[4,0,0,0,0,9,0,2],
+[4,0,9,0,0,0,0,2],
+[4,0,0,0,0,0,0,2],
+[8,3,3,3,3,3,3,7]]
+This level data can be explained as follows:
+• ID 0: Sand tile, walkable
+• ID 1, 2, 3, and 4: Wall tiles on top, right, bottom, and left respectively
+• ID 5, 6, 7, and 8: Wall corner tile on top - left, top - right, bottom - right, and 
+bottom - left respectively
+• ID 9: Sand tile with a rock formation
+层级数据可以如下解释：
+ID0：沙子块，可以行走
+ID1、2、3和4：分别表示墙的上、右、下和左
+ID5、6、7和8分别表示拐角的左上、右上，右下和左下。
+ID9表示有岩石沙子
+Relationship between screen space and level array
+Now that we have represented our level data using a 2D array, let us explore how 
+we can formulate a relationship between the graphic in screen space and their 
+corresponding value in the array. Let us consider a case where we have square tiles 
+with the dimension tileWidth x tileWidth. Also, our level array is M x N, that is, 
+M columns and N rows. We can place the first tile at [0][0] on screen at (0,0) as:
+var tile:Image = Image.fromBitmap("tile"+levelData[0][0]+".png");
+addChild(tile);
+The source uses a better asset management by using a texture atlas, and 
+then an image will be created using the following code:
+tile=new Image(texAtlas.getTexture(paddedName(levelData
+[i][j])));
+屏幕空间和层级数组的关系
+现在我们用一个二维数组来表示我们的层级数据，这样就可以在屏幕空间的图形和相应的数组值之间形成一种关系。来考虑tileWidth*tileWidth这样维度的正方形瓦块。同时我们的层级数组是M*N，这样就是有M列，N行。在屏幕的（0,0)处放置第一个个[0][0]瓦块：
+var tile:Image=Image.fromBitmap(“tile”+levelData[0][0]+”.png”);
+addChild(tile);
+源码使用纹理别名来更好的进行素材管理，用下面的代码创建一个图片：
+Tile=new Image(texAtlas.getTexture(paddedName(levelData[i][j])));
+
+LevelData[0][0] will return the stored tile ID value and it is appended to the string 
+to form the correct name of the tile. For example, if levelData[0][0] is 5, then the 
+tile image name will be tile5.png. We create an image from this particular bitmap 
+and add it to the scene. As this tile is situated at the top-left extreme, there is no need 
+to explicitly set the x and y values because by default they will be 0, 0. For any other 
+tile, we will need to set the x and y values for rightly positioning it on the screen.
+
+LevelData[0][0]会返回存储的瓦块ID值，之后追加到字符串中形成正确的瓦块名字。例如，如果leveData[0][0]是5，那瓦块图片就是tile5.png.我们利用这个特别的位图创建一个图片，并将其添加到场景中。由于这个瓦块位于最左上角，所以不需要设置x和y值，因为默认的就是0,0.对其他的瓦块，我们需要根据在屏幕中的准确位置设置其x和y值。
+
+Let us take the example of levelData[5][4], which means the tile is in the sixth 
+column and fifth row. For placing this tile, we will need to offset the tile by relevant 
+multiples of tileWidth.
+拿leveData[5][4]来说，此瓦块位于第六列，第五行。为了放置此瓦块，我们需要根据tileWidth的相对多倍来进行补偿。
+var tile:Image = Image.fromBitmap("tile"+levelData[5][4]+".png");
+addChild(tile);
+tile.x=5*tileWidth;
+tile.y=4*tileWidth;
+
+So for any tile at an arbitrary position i, j in the array, the screen position will be 
+x = i * tileWidth and y = j * tileWidth. This is the forward relationship 
+from level array to screen space, but what about the reverse? How will we find the 
+corresponding level array value from any particular point in screen space?
+For this, we will need to reverse the preceding formula, that is, i = x / tileWidth 
+and j = y / tileWidth. Care is to be taken to make sure that we only consider 
+the integer value of the calculated values, as the original result will be a float with 
+decimal values. This is because AS3 array indices are always integer values starting 
+at a value of 0.
+So let us write down our formulas for any level array at the position [i][j]:
+对于数组中随意的i和j来说，屏幕位置是x=i*tileWidth,y=j*tileWidth.这是层级数组和屏幕空间之间的关系，但是反过来呢？如何利用屏幕空间中的任意一点得到对应的层级数组值呢？
+我们可以将此公式反过来，i=x/tileWidth，j=y/tileWidth.这里需要注意的是我们只考虑计算的整数值，可能得到的值是浮点型的，但是我们统一用整数值。这是因为AS3数组下标是用整数表示且从0开始计数的。
+下面来看下任意层级数组在[i][j]位置的公式：
+x = offsetX + (i * tileWidth);
+y = offsetY + (j * tileWidth);
+
+Here, offsetX and offsetY are the space we need to leave out in the left and top 
+respectively, because in normal cases our level art won't start at (0, 0) screen position, 
+but at an arbitrary (offsetX, offsetY). Reversing the preceding formula, we 
+calculate the level array indices as follows:
+这里，offsetX和offsetY是我们需要在左边和上面需要分别留出来的空间，因为在正常状况下，我们的层级素材不会在屏幕的0,0处开始，而是一个任意的offsetX,offsetY.将公式逆向，就可以计算出数组层级的下标：
+
+i = int ((x - offsetX) / tileWidth);
+j = int ((y - offsetY) / tileWidth);
+There can be times at which the calculated values may fall out of valid array 
+dimensions and may need to be ignored. Now let us try implementing a simple  
+top-down view array-based level using Starling, based on the knowledge we  
+have acquired so far.
+有时候可能计算出来的值跟合法的数组维度不符合，这就需要忽略。现在我们基于前面学到的知识，在一个简单的基于数组层级的俯视图中使用Starling。
+Prerequisites for using the shared code
+There are certain prerequisites that are necessary for following the programming 
+done in this book. You will need to perform the following setup properly:
+• ActionScript development IDE such as Flash Builder 4.7, FDT, FlashDevelop, 
+or Flash IDE is required. Flash Builder is recommended, but if you are 
+concerned with licensing, then the free FlashDevelop is ideal for the 
+Windows platform.
+• The latest source or compiled SWC of Starling should be added to the class 
+path or should be linked. At the time of writing, the latest Starling version 
+was 1.4.1.
+• Download the art assets and the sample code for this book from the  
+Packt website.
+Downloading the example code
+You can download the example code files for all Packt books 
+you have purchased from your account at http://www.
+PacktPub.com. If you purchased this book elsewhere, you can 
+visit http://www.PacktPub.com/support and register to 
+have the files e-mailed directly to you.
+使用分享代码的前提
+此书中查看代码需要几个前提。首先需要如下正确的执行建立流程。
+AS开发IDE，例如Flash Builder4.7，FDT，Flash Develop或者其他IDE，推荐用Flash Builder，如果你对证书很关心，可以使用Windows平台下的免费Flash Develop。
+需要将最新的Starling源码或者SWC添加到类路径或者链接进去，此书编写的时候，最新的Starling版本是1.4.1
+在下面网站下载素材和案例代码
+下载案例代码
+可以下载所有Packt书籍相关案例代码，可以在http://www.packtPub.com利用账户购买。如果你买了书，则可以访问http://www.packtpub.com/support注册来通过邮件发送给你。
+
+Creating a top-down game scene
+Let us try to implement a sample Starling-based top-down level with provision to 
+detect the tile on which we touch. We will use the source and the tile sheet given in 
+the Chapter 1 folder from the shared source. The code for the TopDownScene class 
+is shared in the following code snippet. You will need to initialize this class from the 
+Starling document class using new Starling(TopDownLevel, stage).
+创建一个俯视游戏场景
+我们使用提供的东西来创建一个基于俯视层级的Starling案例触碰瓦块。我们将使用分享源码中的chapter1文件中的代码和瓦块素材来创建。下面是TopDownScene类代码，可以使用new Starliing（TopDownLevel,stage)在Starling文档类中初始化此类。
+package com.csharks.juwalbose
+{
+  import starling.display.DisplayObjectContainer;
+  import starling.display.Image;
+  import starling.events.Event;
+  import starling.events.Touch;
+  import starling.events.TouchEvent;
+  import starling.textures.Texture;
+  import starling.textures.TextureAtlas;
+  public class TopDownLevel extends DisplayObjectContainer
+  {
+    //Texture Atlas image
+    [Embed(source="../../../../assets/assets.png")]
+    public static const AssetTex:Class;
+    //Texture Atlas XML
+    [Embed(source = "../../../../assets/assets.xml", mimeType =  
+      "application/octet-stream")]
+  private static const AssetXml:Class;
+    private var texAtlas:TextureAtlas;
+    private var tileWidth:uint=50;
+    private var borderX:uint=25;
+    private var borderY:uint=50;
+Chapter 1
+[ 17 ]
+    private var touch:Touch;
+    //LevelData as 2 dimensional array
+    private var levelData:Array= 
+      [["14","21","21","21","21","21","21","13","21","21","21", 
+        "21","21","21","17"],
+      ["18","12","7","2","2","8","2","3","2","5","2", 
+        "2","7","13","20"],
+      ["18","3","3","2","2","2","2","2","2","2","2", 
+        "2","3","2","20"],
+      ["18","3","3","2","2","2","9","2","2","2","3", 
+        "2","3","3","20"],
+      ["18","5","2","2","5","2","2","2","4","2","2", 
+        "2","2","5","20"],
+      ["10","2","2","2","2","3","2","2","2","2","2", 
+        "2","7","2","12"],
+      ["18","2","8","2","2","2","2","3","2","5","2", 
+        "2","2","5","20"],
+      ["18","2","2","2","4","2","2","2","2","2","4", 
+        "2","2","2","20"],
+      ["18","11","2","3","2","2","2","3","2","2","2", 
+        "2","2","10","20"],
+      ["15","19","19","19","19","19","19","13","19", 
+        "19","19","19","19","19","16"]];
+  public function TopDownLevel()
+  {
+    super();
+    this.addEventListener(Event.ADDED_TO_STAGE, init);
+  }
+  private function init(e:Event):void
+  {
+  this.removeEventListener(Event.ADDED_TO_STAGE, init);
+  //Let us create a texture atlas
+  var tex:Texture =Texture.fromBitmap(new AssetTex(),false);
+  var img:Image;
+  texAtlas=new TextureAtlas(tex,XML(new AssetXml()));
+  //Loop through 2D array & add images to stage
+  for(var i:int=0;i<levelData.length;i++){//i is for rows
+  for(var j:int=0;j<levelData[0].length;j++){//j is for columns
+  img=new Image(texAtlas.getTexture(paddedName(levelData[i][j])));
+  addChild(img);
+  //calculate position depending on i & j
+  img.x=j*tileWidth+borderX;
+  img.y=i*tileWidth+borderY;
+  }
+  }
+  //Listener for touch
+  this.addEventListener(TouchEvent.TOUCH, onTouch);
+  }
+  private function paddedName(id:String):String{
+    //function to return '0' padded name
+    var offset:uint=10000;
+    offset+=int(id);
+    var str:String="tiles";
+    str+=offset.toString().substr(1,4);
+    return str;
+  }
+  private function detectTile(valueX:int, valueY:int):void{
+    //function to detect tile at given position
+    var tileX:int=int(valueX-borderX)/tileWidth;
+    var tileY:int=int(valueY-borderY)/tileWidth;
+    trace(levelData[tileY][tileX]);
+  }
+  protected function onTouch(event:TouchEvent):void
+  {
+    for (var i:int = 0; i < event.getTouches(this).length; ++i)
+      {
+        touch = event.getTouches(this)[i];
+        detectTile(touch.globalX,touch.globalY);
+      }
+    }
+  }
+}
+Here we are using the Starling TextureAtlas class created from embedded assets. 
+The embedded XML and PNG files are created using the TexturePacker application 
+using the Sparrow/Starling export feature. The PaddedName function adds the zero 
+padding to the tile names and the onTouch listener function traces out the tile value 
+in the levelData array based on the touch position. The registration point of an 
+image is at its top-left corner by default. This benefits us for placing them properly 
+in the scene. Try working with this on your own by playing around with the level 
+data. You can change the values in the level data and see the level scene updates 
+accordingly. We have a total of 22 tiles to play with.
+现在我们正在使用利用嵌入素材创建的Starling TexttureAtlas类。通过纹理打包器应用的Starling导出功能创建内嵌的XML和PNG文件.PaddedName函数添加零填充到瓦块名字，还要添加能更加点击位置输出相应levelData数组中瓦块数值的onTouch监听函数。图片的注册点默认是左上角的。这样有利于在场景中正确的放置它们。尽量利用层级数据自己放置。可以改变在层级数据中的值并查看相应更新的层级场景。我们总共有22个瓦块需要处理。
+Applying the RenderTexture approach
+In the preceding code, we have placed each tile as individual images on the scene. 
+This will look fine but it is not necessarily the best approach. This creates a lot of 
+independent entities on the scene, which may become a performance hog for a 
+complicated game where we may need to manipulate each and every tile on every 
+frame. An alternate approach is to use a RenderTexture class.
+A RenderTexture class can be considered as a dynamically changeable Starling 
+texture, which can be altered anytime via code. We can use methods to clear it, draw 
+items onto it, or to fill it up completely. For our previous level scene, we can simplify 
+everything by creating a single image based on a RenderTexture class, and then 
+drawing all tiles onto it. This results in the scene having only one entity, thereby 
+minimizing the effort on the Flash Player. Let us take a look at the changes in the code:
+应用RenderTexture方法
+在之前的代码中，我们在屏幕上放置的每个瓦块都是看做单个图片。这看起来不错但却不是最好的方法。因为这样就在屏幕上面创建了大量独立的实体，这对复杂游戏的性能来说是一个非常大的考验，因为每帧都需要处理大量的瓦块。另一种方法就是使用RenderTexture类。
+RenderTexture类可以看做是一个动态更改的Starling纹理，它可以公共代码任意时刻都可以改变。可以使用方法来清除它，在里面绘制物件，或者完全填满它。对之前的层级场景来说我们可以通过创建一个基于RenderTexture类的单独图片就可以简化所有。这样场景中就只有一个实体了，可以大幅度减少Flash player的工作量，来看下更改后的代码：
+rTex=new RenderTexture(stage.stageWidth,stage.stageHeight);
+var rTexImage:Image= new Image(rTex);
+addChild(rTexImage);
+for(var i:int=0;i<levelData.length;i++){
+  for(var j:int=0;j<levelData[0].length;j++){
+    img=new Image(texAtlas.getTexture 
+      (paddedName(levelData[i][j])));
+    img.x=j*tileWidth+borderX;
+    img.y=i*tileWidth+borderY;
+    //draw to texture instead of adding new image
+    rTex.draw(img);
+  }
+}
+The detectTile function is also slightly altered to ignore invalid touch points which 
+fall out at the side level area:
+detectTile函数也需要稍微修改来忽略在边界层级数据中的不合理点击点：
+private function detectTile(valueX:int, valueY:int):void{
+  var tileX:int=int(valueX-borderX)/tileWidth;
+  var tileY:int=int(valueY-borderY)/tileWidth;
+  if(tileX<0 ||tileY<0 ||tileX>levelData[0].length-1
+  ||tileY>levelData.length-1)
+  { //outside of tile area
+    return;
+  }
+  trace(levelData[tileY][tileX]);
+}
+
+Use RenderTexture wherever possible for efficient resource management as well 
+as performance boost. There is an additional method called RenderTexture.
+drawBundled, which can further speed things up considerably. We will be using  
+this function a lot for our screen update.
+尽量使用RenderTexture来提高资源的高效管理和性能的提高。还有另外一个函数：RenderTexture.drawBundled，它相应的能更加提高速度。我们会在更新屏幕的时候大量使用此方法。
+Tools of the trade
+We have successfully created our level scene based on a level data 2D array. There 
+are different tools which we may need or which may help us to speed up our 
+development. Let me mention a few of these which every game developer should 
+consider having in their tool box:
+需要的工具
+我们成功的基于一个层级数据的二维数组创建了我们自己的层级场景。有很多不同的工具能帮助我们加速开发。下面来简要介绍一些常用的工具：
+• TexturePacker: This is a tool for packing images into texture atlases. It is very 
+handy for resource management, size reduction, and memory optimization. 
+A free version is available. Please note that the latest Flash Professional CC 
+has an inbuilt spritesheet creator.
+TexturePacker：这是一个将图片打包成纹理的工具。对于资源管理、缩小尺寸和内存优化很有帮助。并且有免费的版本。需要注意的是最新的Flash Professional CC内置了spritesheet创建器。
+• Hiero: This is a free online Java-based application for creating bitmap fonts. 
+Bitmap fonts will help to speed things up for game text which need frequent 
+updating. You may also use standalone tools such as BMFont for Windows 
+or Glyph Designer for OS X.
+Hiero：这是一个基于Java的在线应用，可以用来创建位图字体。位图自己可以帮助加速游戏文本的更新。在Windows下你也可以使用类似BMFont这样的工具，在OS X下则可以使用Glyph Designer这样的工具。
+• Adobe Scout: This is a wonderful tool for profiling your AS3 applications and 
+games from the stables of Adobe. This is a must have for any AS3 developer. 
+It is a part of the Adobe Gaming SDK. You can get it for free now.
+Adobe Scout：这是一个查看AS3应用和游戏的稳定版本。对于任何AS3开发者来说都是必须的。这是Adobe游戏SDK的一部分，可以免费得到。
+• Adobe ATF tools: These are a set of texture packing tools from Adobe, which 
+help to minimize the memory consumption on handheld devices. This will 
+be needed for our cross-platform deployment segment. It is a part of Adobe 
+Gaming SDK.
+Adobe ATF工具：Adobe有很多纹理打包工具，可以减少移动设备的内存消耗。此工具对于跨平台部署很有用，是Adobe 游戏SDK的一部分。
+• DragonBones framework: This is a Flash IDE extension for creating skeleton-
+based animations. It is a part of Adobe Gaming SDK.
+• FeathersUI latest source or compiled SWC should be added to class path or 
+should be linked. We will be using this excellent framework for all our  
+UI needs.
+• External debuggers such as Arthropod or De MonsterDebugger will facilitate 
+bug spotting and fixing.
+DragonBones框架：这是一个歘根据基于骨架动画的Flash IDE扩展工具。是Adobe 游戏SDK的一部分。
+FeathersUI 最新源码或者编译得到的SWC需要添加到类路径或者添加链接。我们使用这个框架来应对所有的UI需求。
+还有类似Arthropod或者De MonsterDebugger这样的外部调试器来发现和修复bug。
+
+Summary
+In this chapter, we learned about the basic structure of a game and got introduced 
+to the game loop and game states. We learned that the Flash Player facilitates game 
+development by providing its own game loop hook and doing scene updates per 
+frame. I also explained to you the game idea, which we will be trying to develop 
+throughout this book. The idea is a tile-based, isometric, and turn-based game.  
+We understood about the turn-based game and got in-depth understanding of  
+the tile-based approach.
+We wrote code to create a level using the tile-based approach where the level data is 
+stored as a 2D array. We also found out the relationship between screen space and 
+array indices. Let us use the tile-based approach we have learned in this chapter to 
+implement the isometric view in the next chapter. We will learn how a normal 2D 
+view relates to the interesting pseudo 3D isometric view.
+总结
+在这一章中，我们学习了一个游戏的基本结构，了解了游戏循环以及游戏状态。我们知道Flash Player提供了自己的游戏循环工具来帮助游戏开发以便每帧都更新屏幕。同时也解释了我们的游戏想法，此书中我们会尽力创建这个游戏。此想法是基于瓦块的、等轴视角的回合制游戏。我们了解了什么是回合制游戏，深入探索了基于瓦块的方法。
+我们将层级数据存储到一个二维数组中，使用基于瓦块的方法来创建一个层级。我们也发现了屏幕空间和数组下标直接的关系。这样就可以在本章中使用基于瓦块的方法实现第二章中的等轴视角。我们将学习如何用一个标准的二维失效转换为相对应的伪三维等轴视角。
